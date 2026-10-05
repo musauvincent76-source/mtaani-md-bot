@@ -180,24 +180,23 @@ function menuText() {
 /* ================= WHATSAPP CONNECTION ================= */
 const greeted = new Map();
 
+const restarts = [];
+function canRestart() { const n = Date.now(); while (restarts.length && n - restarts[0] > 120000) restarts.shift(); restarts.push(n); return restarts.length <= 6; }
+
 async function start(number) {
   if (sock) { try { sock.ev.removeAllListeners(); sock.end(undefined); } catch (e) {} sock = null; }
   const { state, saveCreds } = await useMultiFileAuthState(SESSION_DIR);
+  // Not linked and no number yet: wait for the panel. No connection to WhatsApp is opened for nothing.
+  if (!state.creds.registered && !number) { connState = "needs-pairing"; return; }
   const { version } = await fetchLatestBaileysVersion();
   const s = makeWASocket({
     version, auth: state, logger: pino({ level: "silent" }), browser: Browsers.ubuntu("Chrome"),
-    printQRInTerminal: false, markOnlineOnConnect: false, syncFullHistory: false
+    printQRInTerminal: false, markOnlineOnConnect: false, syncFullHistory: false,
+    shouldSyncHistoryMessage: () => false   // do not download old chats: a big cause of failed links on small servers
   });
   sock = s;
 
-  if (!s.authState.creds.registered) {
-    if (!number) { connState = "needs-pairing"; return; }
-    connState = "pairing"; await sleep(3000);
-    const code = await s.requestPairingCode(number);
-    pairing = code.match(/.{1,4}/g).join("-");
-    log("Pairing code ready:", pairing);
-  }
-
+  // Listeners go on BEFORE asking for the code, so nothing during linking is missed.
   s.ev.on("creds.update", saveCreds);
   s.ev.on("connection.update", ({ connection, lastDisconnect }) => {
     if (s !== sock) return;
@@ -206,12 +205,34 @@ async function start(number) {
       log(`${CONFIG.botName} is online as +${me}`); setTimeout(backupSession, 5000);
     }
     if (connection === "close") {
-      const code = lastDisconnect?.error?.output?.statusCode;
+      const err = lastDisconnect?.error, code = err?.output?.statusCode;
+      log("Connection closed. Code:", code ?? "none", err?.message || "");
       if (code === DisconnectReason.loggedOut) {
-        connState = "logged-out"; log("Logged out or banned by WhatsApp. Use Recovery in the panel.");
-      } else { connState = "reconnecting"; log("Connection closed, reconnecting…"); setTimeout(() => start().catch(e => log("Restart failed:", e.message)), 3000); }
+        connState = "logged-out"; pairing = null; me = null; sock = null;
+        fs.rmSync(SESSION_DIR, { recursive: true, force: true });
+        log("WhatsApp logged this device out (401). That is not always a ban: it also happens when a link fails or the device is removed on the phone. Link again from the panel.");
+      } else if (code === DisconnectReason.forbidden) {
+        connState = "restricted"; sock = null;
+        log("WhatsApp refused the connection (403). The number may be restricted. Do not keep retrying.");
+      } else if (code === DisconnectReason.connectionReplaced) {
+        connState = "replaced"; sock = null;
+        log("Another copy of the bot is using this session (440). Stop the other copy, then press Restart.");
+      } else if (!canRestart()) {
+        connState = "error"; sock = null;
+        log("Too many reconnects in a short time. Stopped to protect the number. Press Restart when ready.");
+      } else {
+        connState = "reconnecting";
+        setTimeout(() => start().catch(e => log("Restart failed:", e.message)), code === DisconnectReason.restartRequired ? 1000 : 3000);
+      }
     }
   });
+
+  if (!state.creds.registered) {
+    connState = "pairing"; await sleep(3000);
+    const code = await s.requestPairingCode(number);
+    pairing = code.match(/.{1,4}/g).join("-");
+    log("Pairing code ready:", pairing);
+  }
 
   s.ev.on("messages.upsert", async ({ messages, type }) => {
     if (type !== "notify" || s !== sock) return;
