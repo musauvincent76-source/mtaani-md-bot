@@ -121,7 +121,7 @@ input[type=range]{width:100%;accent-color:var(--acc)}
     <label for="rid">Restore from a session ID</label>
     <textarea id="rid" placeholder="Paste a session ID that starts with MTAANI-MD~"></textarea>
     <div class="row"><button class="ghost" id="rt">Restore session</button><button class="danger" id="ul">Unlink this number</button></div>
-    <div class="note"><b>If WhatsApp bans the number:</b> no panel or bot can lift a ban. Open WhatsApp on that phone, tap "Request a review" on the ban screen and wait for their reply. Meanwhile link a different number here and your settings stay. Keep a copy of your session ID: if your server changes, paste it above to reconnect without a new code. It only works while the account is still active.</div>
+    <div class="note"><b>If the status says Logged out or Restricted:</b> a logout (401) is not always a ban, it also happens when a link fails. If the number really is banned, no panel or bot can lift it. Open WhatsApp on that phone, tap "Request a review" on the ban screen and wait for their reply. Meanwhile link a different number here and your settings stay. Keep a copy of your session ID: if your server changes, paste it above to reconnect without a new code. It only works while the account is still active.</div>
     <div class="msg" id="rmsg"></div>
   </div>
 
@@ -148,7 +148,7 @@ async function api(path, body) {
 }
 function show(on) { $("login").style.display = on ? "none" : "block"; $("app").style.display = on ? "block" : "none"; if (!on) { $("pt").textContent = "Signed out"; $("pill").className = "pill"; } }
 const fmt = s => s >= 86400 ? Math.floor(s/86400)+"d" : s >= 3600 ? Math.floor(s/3600)+"h" : Math.floor(s/60)+"m";
-const LABEL = { online:["Online","online"], pairing:["Waiting for code","warn"], "needs-pairing":["Not linked","warn"], reconnecting:["Reconnecting","warn"], "logged-out":["Logged out or banned","bad"], idle:["Starting","warn"] };
+const LABEL = { online:["Online","online"], pairing:["Waiting for code","warn"], "needs-pairing":["Not linked","warn"], reconnecting:["Reconnecting","warn"], "logged-out":["Logged out","bad"], restricted:["Restricted (403)","bad"], replaced:["Running twice","bad"], error:["Stopped","bad"], idle:["Starting","warn"] };
 
 $("lg").onclick = async () => { try { await api("/api/login", { password: $("pw").value }); $("lerr").textContent = ""; $("pw").value = ""; poll(); } catch(e){ $("lerr").textContent = e.message; } };
 $("pw").addEventListener("keydown", e => { if (e.key === "Enter") $("lg").click(); });
@@ -190,4 +190,4 @@ $("ul").onclick = async () => { if (!confirm("Unlink this number? Save your sess
 poll();
 </script>
 </body>
-  </html>
+</html>
