@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Mtaani MD – Control Panel</title>
+<style>
+:root{color-scheme:dark;--bg:#070b09;--panel:#111713;--panel2:#161e19;--line:#212c25;--ink:#e8f1ea;--mute:#8da095;--acc:#4ff0a0;--acc2:#1fb872;--red:#ff6b5e;--amber:#ffc857;--blue:#12a8ff}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--ink);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+ background:radial-gradient(900px 420px at 5% -8%,#12382699,transparent 70%),radial-gradient(700px 360px at 100% 0,#0e2b4a55,transparent 70%),var(--bg);background-attachment:fixed}
+.wrap{max-width:980px;margin:auto;padding:18px 16px 60px}
+header{position:sticky;top:0;z-index:10;background:#070b09cc;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;padding-top:12px;padding-bottom:12px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:800}
+.logo{width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,var(--acc),var(--blue));display:grid;place-items:center;color:#04140c;font-weight:900}
+.brand small{display:block;font-weight:500;color:var(--mute);font-size:12px;letter-spacing:.4px;margin-top:-2px}
+.pill{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:99px;font-size:12.5px;font-weight:700;border:1px solid var(--line);background:#0b110d}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--mute)}
+.online .dot{background:var(--acc);box-shadow:0 0 10px var(--acc)}.online{color:var(--acc)}
+.warn .dot{background:var(--amber)}.warn{color:var(--amber)}
+.bad .dot{background:var(--red)}.bad{color:var(--red)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.card{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 10px 30px #00000055}
+.card.full{grid-column:1/-1}
+h2{margin:0 0 4px;font-size:17px;font-weight:800;display:flex;align-items:center;gap:10px}
+h2::before{content:"";width:5px;height:18px;border-radius:3px;background:linear-gradient(var(--acc),var(--acc2))}
+.sub{margin:0 0 14px;color:var(--mute);font-size:13.5px}
+label{display:block;font-weight:600;font-size:12px;color:var(--mute);text-transform:uppercase;letter-spacing:.7px;margin:12px 0 6px}
+input[type=text],input[type=password],input[type=tel],select,textarea{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;font:inherit;background:#0b110d;color:var(--ink)}
+textarea{min-height:84px;resize:vertical;font:12px/1.4 ui-monospace,Consolas,monospace}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px #4ff0a02e}
+button{cursor:pointer;border:0;border-radius:12px;padding:12px 18px;font:700 14px inherit;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#04140c;transition:transform .12s,filter .12s}
+button:hover{filter:brightness(1.08)}button:active{transform:scale(.97)}button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+button.danger{background:#ff6b5e1f;color:var(--red);border:1px solid #ff6b5e55}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.stat{background:#0b110d;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.stat b{display:block;font-size:22px;font-variant-numeric:tabular-nums}.stat span{font-size:11.5px;color:var(--mute);text-transform:uppercase;letter-spacing:.6px}
+.code{margin:14px 0 4px;text-align:center;font:800 34px ui-monospace,Consolas,monospace;letter-spacing:5px;color:var(--acc);background:#0b110d;border:2px dashed var(--acc2);border-radius:14px;padding:16px}
+ol{padding-left:20px;color:var(--mute);font-size:13.5px;margin:8px 0 0}
+.tg{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--line)}
+.tg small{display:block;color:var(--mute);font-size:12.5px}
+.sw{position:relative;width:46px;height:26px;flex:none;margin:0}.sw input{opacity:0;width:0;height:0}
+.sw span{position:absolute;inset:0;background:#26332b;border-radius:99px;transition:.2s;cursor:pointer}
+.sw span::after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#cfe0d5;transition:.2s}
+.sw input:checked+span{background:var(--acc2)}.sw input:checked+span::after{transform:translateX(20px);background:#fff}
+.sw input:focus-visible+span{outline:2px solid var(--acc);outline-offset:2px}
+input[type=range]{width:100%;accent-color:var(--acc)}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:6px 0 12px}
+.chip{background:#0b110d;border:1px solid var(--line);border-radius:99px;padding:4px 11px;font:12.5px ui-monospace,Consolas,monospace;color:#bcd0c3}
+.cat{font-size:12px;color:var(--mute);text-transform:uppercase;letter-spacing:.7px;font-weight:700}
+.log{background:#0b110d;border:1px solid var(--line);border-radius:12px;padding:12px;height:180px;overflow:auto;font:12px/1.6 ui-monospace,Consolas,monospace;color:#9fb4a6;white-space:pre-wrap}
+.note{background:#ffc8571a;border:1px solid #ffc85755;color:#ffe3a3;border-radius:12px;padding:10px 12px;font-size:13px;margin-top:12px}
+.msg{margin-top:10px;font-weight:600;font-size:14px;min-height:20px}.ok{color:var(--acc)}.err{color:var(--red)}
+#login{max-width:420px;margin:10vh auto 0;text-align:center}#login h2{justify-content:center}#login h2::before{display:none}
+#login .logo{margin:0 auto 14px;width:52px;height:52px;font-size:24px;border-radius:15px}#login label{text-align:left}
+#app{display:none}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="brand"><div class="logo">M</div><div><span id="bn">Mtaani MD</span><small>CONTROL PANEL</small></div></div>
+  <span class="pill" id="pill"><i class="dot"></i><span id="pt">Connecting…</span></span>
+</div></header>
+
+<div class="wrap">
+<div class="card" id="login">
+  <div class="logo">M</div><h2>Panel sign in</h2>
+  <p class="sub">Enter the panel password shown in the console or set in PANEL_PASSWORD.</p>
+  <label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password">
+  <div class="row" style="justify-content:center"><button id="lg">Sign in</button></div>
+  <div class="msg err" id="lerr"></div>
+</div>
+
+<div id="app">
+ <div class="grid">
+  <div class="card">
+    <h2>Status</h2><p class="sub" id="who">No number linked yet.</p>
+    <div class="stats">
+      <div class="stat"><b id="up">0m</b><span>Uptime</span></div>
+      <div class="stat"><b id="sv">0</b><span>Statuses viewed</span></div>
+      <div class="stat"><b id="qu">0</b><span>Queued</span></div>
+    </div>
+    <div class="row"><button class="ghost" id="rs">Restart connection</button></div>
+  </div>
+
+  <div class="card">
+    <h2>Link a device</h2>
+    <p class="sub">Works with numbers from any country. Use the full international format, digits only.</p>
+    <label for="num">WhatsApp number</label>
+    <input id="num" type="tel" inputmode="numeric" placeholder="e.g. 2547XXXXXXXX or 447XXXXXXXXX">
+    <div class="row"><button id="pr">Get pairing code</button></div>
+    <div id="codeBox" style="display:none">
+      <div class="code" id="code"></div>
+      <ol><li>Open WhatsApp on that phone.</li><li>Linked devices, then Link a device.</li><li>Tap "Link with phone number instead".</li><li>Type the code above. Your session ID is available below once it connects.</li></ol>
+    </div>
+    <div class="msg" id="pmsg"></div>
+  </div>
+
+  <div class="card">
+    <h2>Settings</h2><p class="sub">Changes apply straight away.</p>
+    <div class="tg"><div>Auto view statuses<small>Views every new status after the delay</small></div><label class="sw"><input type="checkbox" id="autoView"><span></span></label></div>
+    <div class="tg"><div>Auto react to statuses<small>Sends a 💚 after viewing</small></div><label class="sw"><input type="checkbox" id="autoReact"><span></span></label></div>
+    <div class="tg"><div>Auto greeting<small>Greets people who say hi in private chats</small></div><label class="sw"><input type="checkbox" id="autoGreet"><span></span></label></div>
+    <label for="mode">Who can use commands</label>
+    <select id="mode"><option value="public">Public (everyone)</option><option value="self">Self (owner only)</option></select>
+    <label for="dl">Delay before each action: <b id="dv">10</b> seconds</label>
+    <input type="range" id="dl" min="5" max="60" value="10">
+    <div class="msg" id="smsg"></div>
+  </div>
+
+  <div class="card">
+    <h2>Session ID and recovery</h2>
+    <p class="sub">The session ID is the login for your WhatsApp account. Anyone who has it controls the account, so never post it publicly.</p>
+    <div class="row" style="margin-top:0"><button id="gs">Show session ID</button><button class="ghost" id="cp">Copy</button><button class="ghost" id="ds">Download</button></div>
+    <textarea id="sid" readonly placeholder="Your session ID will appear here" style="margin-top:10px"></textarea>
+    <label for="rid">Restore from a session ID</label>
+    <textarea id="rid" placeholder="Paste a session ID that starts with MTAANI-MD~"></textarea>
+    <div class="row"><button class="ghost" id="rt">Restore session</button><button class="danger" id="ul">Unlink this number</button></div>
+    <div class="note"><b>If WhatsApp bans the number:</b> no panel or bot can lift a ban. Open WhatsApp on that phone, tap "Request a review" on the ban screen and wait for their reply. Meanwhile link a different number here and your settings stay. Keep a copy of your session ID: if your server changes, paste it above to reconnect without a new code. It only works while the account is still active.</div>
+    <div class="msg" id="rmsg"></div>
+  </div>
+
+  <div class="card full">
+    <h2>Commands</h2><p class="sub" id="cn"></p><div id="cmds"></div>
+  </div>
+  <div class="card full">
+    <h2>Activity</h2><div class="log" id="log"></div>
+  </div>
+ </div>
+</div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const msg = (id, t, ok) => { $(id).textContent = t; $(id).className = "msg " + (ok ? "ok" : "err"); };
+async function api(path, body) {
+  const r = await fetch(path, body === undefined ? {} : { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(body) });
+  const d = await r.json().catch(() => ({}));
+  if (r.status === 401 && path !== "/api/login") { show(false); throw new Error("Please sign in again."); }
+  if (!r.ok) throw new Error(d.error || "Something went wrong.");
+  return d;
+}
+function show(on) { $("login").style.display = on ? "none" : "block"; $("app").style.display = on ? "block" : "none"; if (!on) { $("pt").textContent = "Signed out"; $("pill").className = "pill"; } }
+const fmt = s => s >= 86400 ? Math.floor(s/86400)+"d" : s >= 3600 ? Math.floor(s/3600)+"h" : Math.floor(s/60)+"m";
+const LABEL = { online:["Online","online"], pairing:["Waiting for code","warn"], "needs-pairing":["Not linked","warn"], reconnecting:["Reconnecting","warn"], "logged-out":["Logged out or banned","bad"], idle:["Starting","warn"] };
+
+$("lg").onclick = async () => { try { await api("/api/login", { password: $("pw").value }); $("lerr").textContent = ""; $("pw").value = ""; poll(); } catch(e){ $("lerr").textContent = e.message; } };
+$("pw").addEventListener("keydown", e => { if (e.key === "Enter") $("lg").click(); });
+
+let built = false;
+async function poll() {
+  try {
+    const s = await api("/api/state"); show(true);
+    $("bn").textContent = s.botName;
+    const [t, c] = LABEL[s.connState] || ["Unknown","warn"]; $("pt").textContent = t; $("pill").className = "pill " + c;
+    $("who").textContent = s.me ? "Linked as +" + s.me : "No number linked yet.";
+    $("up").textContent = fmt(s.uptime); $("sv").textContent = s.stats.statusViews; $("qu").textContent = s.queue;
+    $("codeBox").style.display = s.pairing ? "block" : "none"; if (s.pairing) $("code").textContent = s.pairing;
+    for (const k of ["autoView","autoReact","autoGreet"]) if (document.activeElement !== $(k)) $(k).checked = s.settings[k];
+    if (document.activeElement !== $("mode")) $("mode").value = s.settings.mode;
+    if (document.activeElement !== $("dl")) { $("dl").value = s.settings.delaySec; $("dv").textContent = s.settings.delaySec; }
+    const L = $("log"), atEnd = L.scrollTop + L.clientHeight >= L.scrollHeight - 20; L.textContent = s.logs.join("\n") || "Nothing yet."; if (atEnd) L.scrollTop = L.scrollHeight;
+    if (!built) {
+      built = true; $("cn").textContent = s.commands.length + " commands. Prefix: " + s.prefix;
+      const g = {}; s.commands.forEach(c => (g[c.cat] = g[c.cat] || []).push(c));
+      $("cmds").innerHTML = Object.entries(g).map(([k,l]) => `<div class="cat">${esc(k)}</div><div class="chips">${l.map(c => `<span class="chip" title="${esc(c.desc)}">${esc(s.prefix + c.name + (c.usage ? " " + c.usage : ""))}</span>`).join("")}</div>`).join("");
+    }
+  } catch (e) {}
+}
+setInterval(() => { if ($("app").style.display === "block") poll(); }, 3000);
+
+$("pr").onclick = async () => { try { const d = await api("/api/pair", { number: $("num").value }); msg("pmsg", d.pairing ? "Code ready. Enter it in WhatsApp within a minute." : "Could not get a code. Try again.", !!d.pairing); poll(); } catch(e){ msg("pmsg", e.message); } };
+$("rs").onclick = async () => { try { await api("/api/restart", {}); msg("pmsg", "Restarting…", true); poll(); } catch(e){ msg("pmsg", e.message); } };
+async function save() { try { await api("/api/settings", { autoView:$("autoView").checked, autoReact:$("autoReact").checked, autoGreet:$("autoGreet").checked, mode:$("mode").value, delaySec:+$("dl").value }); msg("smsg","Saved.",true); } catch(e){ msg("smsg", e.message); } }
+["autoView","autoReact","autoGreet","mode"].forEach(k => $(k).onchange = save);
+$("dl").oninput = () => $("dv").textContent = $("dl").value; $("dl").onchange = save;
+
+$("gs").onclick = async () => { try { $("sid").value = (await api("/api/session")).id; msg("rmsg","Keep this secret.",true); } catch(e){ msg("rmsg", e.message); } };
+$("cp").onclick = async () => { if (!$("sid").value) return msg("rmsg","Press Show session ID first."); try { await navigator.clipboard.writeText($("sid").value); msg("rmsg","Copied.",true); } catch(e){ $("sid").select(); } };
+$("ds").onclick = () => { if (!$("sid").value) return msg("rmsg","Press Show session ID first."); const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([$("sid").value], {type:"text/plain"})); a.download = "mtaani-md-session-id.txt"; a.click(); };
+$("rt").onclick = async () => { if (!$("rid").value.trim()) return msg("rmsg","Paste a session ID first."); try { await api("/api/restore", { id: $("rid").value.trim() }); $("rid").value = ""; msg("rmsg","Restored. Reconnecting…",true); poll(); } catch(e){ msg("rmsg", e.message); } };
+$("ul").onclick = async () => { if (!confirm("Unlink this number? Save your session ID first if you may need it again.")) return; try { await api("/api/unlink", {}); $("sid").value = ""; msg("rmsg","Unlinked.",true); poll(); } catch(e){ msg("rmsg", e.message); } };
+
+poll();
+</script>
+</body>
+  </html>
